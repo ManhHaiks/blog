@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Kỹ Sư Ứng Dụng AI — Sổ Tay Số & Tự động hoá CAD</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Be+Vietnam+Pro:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#FFFFFF;
+    --surface:#F6F8FC;
+    --surface-2:#EEF2F9;
+    --border:#E3E8F0;
+    --text:#0F172A;
+    --text-dim:#5B6472;
+    --blue:#2F6FED;
+    --blue-dark:#1D4FC4;
+    --teal:#0EA5A0;
+    --amber:#E8A33D;
+    --radius:16px;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:'Be Vietnam Pro', sans-serif;
+    color:var(--text);
+    background:var(--bg);
+    line-height:1.6;
+  }
+  h1,h2,h3,.display{font-family:'Sora', sans-serif;}
+  a{color:inherit; text-decoration:none;}
+  .mono{font-family:'JetBrains Mono', monospace;}
+  .wrap{max-width:1120px; margin:0 auto; padding:0 24px;}
+  section{padding:88px 0;}
+  @media (max-width:700px){ section{padding:56px 0;} }
+
+  /* NAV */
+  .nav{
+    position:sticky; top:0; z-index:50;
+    background:rgba(255,255,255,0.85); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--border);
+  }
+  .nav .wrap{display:flex; align-items:center; justify-content:space-between; padding:16px 24px;}
+  .brand{display:flex; align-items:center; gap:10px; font-weight:700; font-size:1.05rem;}
+  .brand-mark{
+    width:32px; height:32px; border-radius:9px;
+    background:linear-gradient(135deg, var(--blue), var(--teal));
+    display:flex; align-items:center; justify-content:center;
+    color:#fff; font-family:'JetBrains Mono'; font-size:0.78rem; font-weight:700;
+  }
+  .nav-links{display:flex; gap:28px; align-items:center;}
+  .nav-links a{font-size:0.92rem; color:var(--text-dim); transition:color .15s;}
+  .nav-links a:hover{color:var(--text);}
+  .nav-cta{
+    background:var(--text); color:#fff; padding:9px 18px; border-radius:9px;
+    font-size:0.88rem; font-weight:600;
+  }
+  .nav-toggle{display:none;}
+  @media (max-width:760px){
+    .nav-links{display:none;}
+  }
+
+  /* HERO */
+  .hero{padding:72px 0 40px;}
+  .hero .wrap{display:grid; grid-template-columns:1.1fr 0.9fr; gap:56px; align-items:center;}
+  @media (max-width:900px){ .hero .wrap{grid-template-columns:1fr;} }
+
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:'JetBrains Mono'; font-size:0.76rem; letter-spacing:.03em; color:var(--blue-dark);
+    background:rgba(47,111,237,0.08); border:1px solid rgba(47,111,237,0.25);
+    padding:6px 12px; border-radius:100px; margin-bottom:22px;
+  }
+  h1.title{font-size:clamp(2rem,4.4vw,3.1rem); font-weight:800; letter-spacing:-0.02em; line-height:1.12;}
+  h1.title .hl{color:var(--blue);}
+  .subtitle{margin-top:18px; font-size:1.05rem; color:var(--text-dim); max-width:480px;}
+
+  .cta-row{margin-top:32px; display:flex; gap:14px; flex-wrap:wrap;}
+  .btn{
+    padding:13px 22px; border-radius:10px; font-weight:600; font-size:0.94rem;
+    display:inline-flex; align-items:center; gap:8px; transition:transform .15s, box-shadow .15s;
+  }
+  .btn:hover{transform:translateY(-2px);}
+  .btn-primary{background:var(--blue); color:#fff; box-shadow:0 10px 24px -10px rgba(47,111,237,0.55);}
+  .btn-secondary{background:var(--surface-2); color:var(--text); border:1px solid var(--border);}
+
+  .stat-row{margin-top:40px; display:flex; gap:32px; flex-wrap:wrap;}
+  .stat b{display:block; font-family:'Sora'; font-size:1.35rem; font-weight:700;}
+  .stat span{font-size:0.82rem; color:var(--text-dim);}
+
+  /* HERO VISUAL — mock panel */
+  .panel{
+    background:var(--surface); border:1px solid var(--border); border-radius:20px;
+    padding:22px; box-shadow:0 30px 60px -30px rgba(15,23,42,0.25);
+  }
+  .panel-top{display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;}
+  .panel-top .mono{font-size:0.74rem; color:var(--text-dim);}
+  .dots{display:flex; gap:6px;}
+  .dots span{width:9px; height:9px; border-radius:50%; background:var(--border);}
+  .panel-row{
+    background:#fff; border:1px solid var(--border); border-radius:12px; padding:14px 16px;
+    display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; font-size:0.88rem;
+  }
+  .badge{
+    font-family:'JetBrains Mono'; font-size:0.72rem; padding:3px 9px; border-radius:100px;
+  }
+  .badge.green{background:rgba(14,165,160,0.12); color:var(--teal);}
+  .badge.amber{background:rgba(232,163,61,0.15); color:#B5791E;}
+  .ai-bubble{
+    margin-top:14px; background:linear-gradient(135deg, rgba(47,111,237,0.06), rgba(14,165,160,0.06));
+    border:1px solid var(--border); border-radius:12px; padding:14px 16px;
+  }
+  .ai-bubble .who{font-family:'JetBrains Mono'; font-size:0.72rem; color:var(--blue-dark); margin-bottom:6px; display:flex; align-items:center; gap:6px;}
+  .ai-bubble .who .dot{width:6px; height:6px; border-radius:50%; background:var(--teal); animation:pulse 1.8s infinite;}
+  @keyframes pulse{0%,100%{opacity:1;} 50%{opacity:.3;}}
+  .ai-bubble p{font-size:0.9rem;}
+
+  /* EXPLORE CARDS */
+  .eyebrow-center{text-align:center; margin-bottom:10px;}
+  h2.section-title{font-size:clamp(1.5rem,3vw,2rem); font-weight:700; text-align:center; letter-spacing:-0.01em;}
+  .section-sub{text-align:center; color:var(--text-dim); max-width:560px; margin:14px auto 0;}
+
+  .explore-grid{margin-top:48px; display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  @media (max-width:800px){ .explore-grid{grid-template-columns:1fr;} }
+  .explore-card{
+    border:1px solid var(--border); border-radius:var(--radius); padding:26px;
+    transition:transform .2s, box-shadow .2s; background:#fff;
+  }
+  .explore-card:hover{transform:translateY(-4px); box-shadow:0 20px 40px -24px rgba(15,23,42,0.2);}
+  .icon-dot{width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; font-weight:700; color:#fff; margin-bottom:16px; font-family:'Sora';}
+  .explore-card h3{font-size:1.1rem; margin-bottom:8px;}
+  .explore-card p{font-size:0.9rem; color:var(--text-dim); margin-bottom:14px;}
+  .explore-card .go{font-size:0.85rem; font-weight:600; color:var(--blue);}
+
+  /* SERVICE SECTIONS */
+  .service{border-top:1px solid var(--border);}
+  .service .wrap{display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center;}
+  @media (max-width:900px){ .service .wrap{grid-template-columns:1fr;} }
+  .service .tag{font-family:'JetBrains Mono'; font-size:0.76rem; color:var(--blue-dark); text-transform:uppercase; letter-spacing:.05em;}
+  .service h2{font-size:clamp(1.5rem,3vw,2rem); font-weight:700; margin-top:10px; letter-spacing:-0.01em;}
+  .service p.desc{margin-top:14px; color:var(--text-dim);}
+  .feature-list{margin-top:22px; display:flex; flex-direction:column; gap:12px;}
+  .feature-list li{display:flex; gap:10px; font-size:0.94rem; list-style:none;}
+  .feature-list li .check{
+    width:20px; height:20px; border-radius:6px; background:rgba(14,165,160,0.12); color:var(--teal);
+    display:flex; align-items:center; justify-content:center; font-size:0.72rem; flex-shrink:0; margin-top:2px;
+  }
+  .service-visual{
+    background:var(--surface); border:1px solid var(--border); border-radius:20px; padding:24px; min-height:260px;
+    display:flex; flex-direction:column; justify-content:center; gap:12px;
+  }
+  .mini-row{background:#fff; border:1px solid var(--border); border-radius:10px; padding:12px 14px; font-size:0.85rem; display:flex; justify-content:space-between;}
+
+  /* BLOG PREVIEW */
+  .blog-grid{margin-top:44px; display:grid; grid-template-columns:repeat(3,1fr); gap:20px;}
+  @media (max-width:800px){ .blog-grid{grid-template-columns:1fr;} }
+  .blog-card{
+    border:1px solid var(--border); border-radius:var(--radius); padding:22px; background:#fff;
+    transition:transform .2s, box-shadow .2s; cursor:pointer;
+  }
+  .blog-card:hover{transform:translateY(-3px); box-shadow:0 18px 36px -22px rgba(15,23,42,0.18);}
+  .blog-card .tag{font-family:'JetBrains Mono'; font-size:0.72rem; color:var(--blue-dark); text-transform:uppercase;}
+  .blog-card h3{font-size:1.05rem; margin-top:10px;}
+  .blog-card p{font-size:0.88rem; color:var(--text-dim); margin-top:8px;}
+  .blog-card .meta{margin-top:14px; font-family:'JetBrains Mono'; font-size:0.74rem; color:var(--text-dim);}
+  .blog-more{text-align:center; margin-top:36px;}
+
+  /* CTA */
+  .cta-section{
+    background:linear-gradient(135deg, #0F172A, #1D4FC4);
+    color:#fff; border-radius:24px; padding:56px 40px; text-align:center;
+    max-width:1120px; margin:0 auto;
+  }
+  .cta-section h2{font-size:clamp(1.5rem,3vw,2.1rem); font-weight:700;}
+  .cta-section p{margin-top:12px; color:#C7D2E8; max-width:480px; margin-left:auto; margin-right:auto;}
+  .cta-section .cta-row{justify-content:center; margin-top:26px;}
+  .cta-section .btn-secondary{background:rgba(255,255,255,0.1); color:#fff; border-color:rgba(255,255,255,0.2);}
+
+  /* FOOTER */
+  footer{border-top:1px solid var(--border); padding:40px 0; color:var(--text-dim); font-size:0.85rem;}
+  footer .wrap{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px;}
+
+  /* READER MODAL (blog) */
+  .overlay{
+    position:fixed; inset:0; z-index:100; background:rgba(15,23,42,0.5); backdrop-filter:blur(3px);
+    display:none; align-items:flex-start; justify-content:center; padding:40px 20px; overflow-y:auto;
+  }
+  .overlay.open{display:flex;}
+  .reader{
+    background:#fff; border-radius:20px; max-width:640px; width:100%; padding:38px; position:relative;
+    border-top:5px solid var(--blue); animation:rise .25s ease;
+  }
+  @keyframes rise{from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:translateY(0);}}
+  .reader .close{
+    position:absolute; top:18px; right:18px; width:32px; height:32px; border-radius:50%;
+    background:var(--surface); border:1px solid var(--border); display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+  .reader h2{font-size:1.5rem; margin-top:10px;}
+  .reader .meta{margin-top:8px; font-family:'JetBrains Mono'; font-size:0.76rem; color:var(--text-dim);}
+  .reader .body{margin-top:20px; font-size:0.95rem;}
+  .reader .body p{margin-bottom:14px;}
+
+  @media (prefers-reduced-motion:reduce){ *{animation:none !important; transition:none !important;} }
+</style>
+</head>
+<body>
+
+<div class="nav">
+  <div class="wrap">
+    <div class="brand"><div class="brand-mark">KS</div> Kỹ Sư Ứng Dụng AI</div>
+    <div class="nav-links">
+      <a href="#sotayso">Sổ Tay Số</a>
+      <a href="#cad">Tự động hoá CAD</a>
+      <a href="#blog">Blog</a>
+      <a href="#lienhe" class="nav-cta">Liên hệ</a>
+    </div>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="wrap">
+    <div>
+      <div class="eyebrow">SỔ TAY SỐ · TỰ ĐỘNG HOÁ CAD · AI CHO NGÀNH XÂY DỰNG</div>
+      <h1 class="title">Công cụ số cho <span class="hl">kỹ sư dự toán</span> và người làm bản vẽ.</h1>
+      <p class="subtitle">Mình xây dựng Sổ Tay Số — hệ thống tra cứu pháp luật xây dựng, và nhận tự động hoá bản vẽ CAD bằng AutoLISP — giúp công việc kỹ thuật hằng ngày nhanh và chính xác hơn.</p>
+      <div class="cta-row">
+        <a href="#lienhe" class="btn btn-primary">Liên hệ hợp tác →</a>
+        <a href="#sotayso" class="btn btn-secondary">Xem Sổ Tay Số</a>
+      </div>
+      <div class="stat-row">
+        <div class="stat"><b>21+</b><span>văn bản pháp luật xây dựng</span></div>
+        <div class="stat"><b>AutoLISP</b><span>script tự động hoá bản vẽ</span></div>
+        <div class="stat"><b>TikTok</b><span>nội dung cho ngành xây dựng</span></div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-top">
+        <span class="mono">sotayso.vn/tra-cuu</span>
+        <div class="dots"><span></span><span></span><span></span></div>
+      </div>
+      <div class="panel-row"><span>Luật Xây dựng số 135/2025/QH15</span><span class="badge green">Hiệu lực 01/07</span></div>
+      <div class="panel-row"><span>Nghị định hướng dẫn thi hành</span><span class="badge amber">Đang cập nhật</span></div>
+      <div class="panel-row"><span>Script AutoLISP — đánh số trục</span><span class="badge green">Sẵn sàng</span></div>
+      <div class="ai-bubble">
+        <div class="who"><span class="dot"></span> AI Trợ lý — Sổ Tay Số</div>
+        <p>"Luật Xây dựng 135/2025 có văn bản hướng dẫn thi hành nào mới nhất không?"</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="eyebrow-center" style="text-align:center;"><span class="eyebrow">KHÁM PHÁ</span></div>
+    <h2 class="section-title">Ba mảng công việc chính</h2>
+    <p class="section-sub">Từ tra cứu pháp lý, tự động hoá bản vẽ, đến những ghi chép nghề nghiệp — mọi thứ ở cùng một nơi.</p>
+
+    <div class="explore-grid">
+      <a class="explore-card" href="#sotayso">
+        <div class="icon-dot" style="background:var(--blue);">S</div>
+        <h3>Sổ Tay Số</h3>
+        <p>Hệ thống tra cứu pháp luật &amp; tiêu chuẩn xây dựng, cập nhật theo quy định mới nhất.</p>
+        <div class="go">Xem chi tiết →</div>
+      </a>
+      <a class="explore-card" href="#cad">
+        <div class="icon-dot" style="background:var(--teal);">C</div>
+        <h3>Tự động hoá CAD</h3>
+        <p>Viết script AutoLISP theo yêu cầu, giảm thời gian thao tác lặp lại trên bản vẽ.</p>
+        <div class="go">Xem chi tiết →</div>
+      </a>
+      <a class="explore-card" href="#blog">
+        <div class="icon-dot" style="background:var(--amber);">B</div>
+        <h3>Blog</h3>
+        <p>Ghi chép về công nghệ, nghề xây dựng và vài suy nghĩ đời thường.</p>
+        <div class="go">Xem chi tiết →</div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="service" id="sotayso">
+  <div class="wrap">
+    <div>
+      <div class="tag">Sổ Tay Số</div>
+      <h2>Sổ tay pháp luật xây dựng, tra cứu trong vài giây.</h2>
+      <p class="desc">Thay vì lục tìm qua hàng chục văn bản rời rạc, Sổ Tay Số tổng hợp và cập nhật liên tục các quy định liên quan đến ngành, để bạn tra đúng, tra nhanh khi cần.</p>
+      <ul class="feature-list">
+        <li><span class="check">✓</span> Cập nhật theo Luật Xây dựng số 135/2025/QH15 và các văn bản hướng dẫn</li>
+        <li><span class="check">✓</span> Trợ lý AI hỗ trợ hỏi đáp trực tiếp trên kho văn bản</li>
+        <li><span class="check">✓</span> Dành cho kỹ sư dự toán, giám sát, và nhà đầu tư</li>
+      </ul>
+    </div>
+    <div class="service-visual">
+      <div class="mini-row"><span>Nghị định XPT hướng dẫn</span><span class="badge green">Mới</span></div>
+      <div class="mini-row"><span>Thông tư định mức dự toán</span><span class="badge green">Đã cập nhật</span></div>
+      <div class="mini-row"><span>TCVN liên quan kết cấu</span><span class="badge amber">Đang rà soát</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="service" id="cad">
+  <div class="wrap">
+    <div class="service-visual" style="order:1;">
+      <div class="mini-row"><span>Đánh số trục tự động</span><span class="badge green">Script sẵn sàng</span></div>
+      <div class="mini-row"><span>Gán layer theo tiêu chuẩn</span><span class="badge green">Script sẵn sàng</span></div>
+      <div class="mini-row"><span>Dựng chi tiết lặp lại</span><span class="badge amber">Tuỳ chỉnh theo yêu cầu</span></div>
+    </div>
+    <div style="order:2;">
+      <div class="tag">Tự động hoá CAD</div>
+      <h2>Script AutoLISP giải quyết đúng việc lặp lại của bạn.</h2>
+      <p class="desc">Mỗi văn phòng thiết kế có thói quen vẽ khác nhau. Mình nhận tìm hiểu quy trình thực tế rồi viết script AutoLISP riêng, giúp việc lặp lại trên AutoCAD nhanh và ít sai sót hơn.</p>
+      <ul class="feature-list">
+        <li><span class="check">✓</span> Khảo sát quy trình vẽ thực tế trước khi viết script</li>
+        <li><span class="check">✓</span> Tương thích với AutoCAD đang dùng tại văn phòng</li>
+        <li><span class="check">✓</span> Bàn giao kèm hướng dẫn sử dụng, dễ tự chỉnh sau này</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="blog">
+  <div class="wrap">
+    <div style="text-align:center;"><span class="eyebrow">BLOG</span></div>
+    <h2 class="section-title">Ghi chép gần đây</h2>
+    <p class="section-sub">Vài bài viết mới nhất — về AI, nghề xây dựng, và những chuyện đời thường.</p>
+    <div class="blog-grid" id="blogGrid"></div>
+    <div class="blog-more"><a href="#blog" class="btn btn-secondary">Xem tất cả bài viết</a></div>
+  </div>
+</section>
+
+<section id="lienhe">
+  <div class="wrap">
+    <div class="cta-section">
+      <h2>Muốn hợp tác hoặc cần tư vấn?</h2>
+      <p>Dù là dùng thử Sổ Tay Số, đặt script AutoLISP riêng, hay chỉ muốn trao đổi thêm — cứ nhắn cho mình.</p>
+      <div class="cta-row">
+        <a href="https://zalo.me/0888870583" target="_blank" rel="noopener" class="btn btn-primary">Nhắn Zalo</a>
+        <a href="https://www.tiktok.com/@kysuungdung.ai" target="_blank" rel="noopener" class="btn btn-secondary">Theo dõi TikTok</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="brand"><div class="brand-mark">KS</div> Kỹ Sư Ứng Dụng AI</div>
+    <div>© 2026 · Sổ Tay Số &amp; Tự động hoá CAD cho ngành xây dựng</div>
+    <div style="display:flex; gap:18px;">
+      <a href="https://zalo.me/0888870583" target="_blank" rel="noopener">Zalo</a>
+      <a href="https://www.tiktok.com/@kysuungdung.ai" target="_blank" rel="noopener">TikTok</a>
+    </div>
+  </div>
+</footer>
+
+<div class="overlay" id="overlay"><div class="reader" id="reader"></div></div>
+
+<script>
+/* Sửa/thêm bài viết ở mảng POSTS bên dưới. Chỉ hiển thị 3 bài mới nhất ở trang chủ. */
+const POSTS = [
+  { id:1, tag:'AI & Công nghệ', date:'2026-07-10',
+    title:'Dùng AI để tự động hoá bản vẽ CAD',
+    excerpt:'Kết hợp AutoLISP với AI giúp giảm thời gian chỉnh sửa bản vẽ lặp lại — và những giới hạn cần biết trước khi áp dụng.',
+    body:['Trong vài tháng gần đây mình thử nghiệm việc kết hợp các script AutoLISP với trợ lý AI để xử lý những tác vụ lặp lại trên bản vẽ.',
+          'AI không thay thế người vẽ, mà thay thế phần việc buồn tẻ nhất — giúp mình dành thời gian cho phần cần tư duy kỹ thuật thật sự.',
+          'Mọi kết quả tự động vẫn cần người kiểm tra lại trước khi xuất bản vẽ chính thức.']},
+  { id:2, tag:'Xây dựng', date:'2026-07-05',
+    title:'3 sai lầm thường gặp khi bóc tách khối lượng',
+    excerpt:'Những lỗi nhỏ nhưng lặp đi lặp lại khi làm dự toán, và cách một quy trình kiểm tra đơn giản có thể tránh phần lớn trong số đó.',
+    body:['Bóc tách khối lượng đòi hỏi sự tỉ mỉ, nhưng chính vì lặp lại nhiều nên rất dễ mắc lỗi theo thói quen.',
+          'Ba lỗi phổ biến: nhầm đơn vị đo, bỏ sót phần giao nhau giữa các cấu kiện, và không cập nhật khối lượng khi bản vẽ thay đổi nhỏ.',
+          'Một checklist kiểm tra chéo trước khi nộp hồ sơ vẫn hiệu quả hơn việc chỉ dựa vào kinh nghiệm cá nhân.']},
+  { id:3, tag:'Suy ngẫm', date:'2026-06-20',
+    title:'Vì sao tôi bắt đầu viết blog này',
+    excerpt:'Không phải để dạy ai điều gì, mà đơn giản là để có một nơi lưu lại những gì mình đang học và đang nghĩ.',
+    body:['Mình làm nội dung trên TikTok đã một thời gian, nhưng nội dung ngắn đôi khi không đủ chỗ để viết trọn vẹn một suy nghĩ.',
+          'Blog này là nơi mình chậm lại một chút — viết dài hơn, nghĩ kỹ hơn.']}
+];
+
+function formatDate(d){ const [y,m,day]=d.split('-'); return `${day}/${m}/${y}`; }
+
+function renderBlog(){
+  const grid = document.getElementById('blogGrid');
+  POSTS.forEach(post=>{
+    const card = document.createElement('div');
+    card.className = 'blog-card';
+    card.innerHTML = `
+      <div class="tag">${post.tag}</div>
+      <h3>${post.title}</h3>
+      <p>${post.excerpt}</p>
+      <div class="meta">${formatDate(post.date)} · Đọc bài →</div>
+    `;
+    card.addEventListener('click', ()=>openReader(post));
+    grid.appendChild(card);
+  });
+}
+
+function openReader(post){
+  const reader = document.getElementById('reader');
+  reader.innerHTML = `
+    <div class="close" id="closeBtn">✕</div>
+    <div class="tag" style="font-family:'JetBrains Mono'; font-size:0.75rem; color:var(--blue-dark); text-transform:uppercase;">${post.tag}</div>
+    <h2>${post.title}</h2>
+    <div class="meta">${formatDate(post.date)}</div>
+    <div class="body">${post.body.map(p=>`<p>${p}</p>`).join('')}</div>
+  `;
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('closeBtn').addEventListener('click', closeReader);
+}
+function closeReader(){ document.getElementById('overlay').classList.remove('open'); }
+document.getElementById('overlay').addEventListener('click', e=>{ if(e.target.id==='overlay') closeReader(); });
+document.addEventListener('keydown', e=>{ if(e.key==='Escape') closeReader(); });
+
+renderBlog();
+</script>
+</body>
+</html>
